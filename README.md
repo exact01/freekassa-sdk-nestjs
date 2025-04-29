@@ -102,10 +102,6 @@ export class PaymentService {
       email: 'customer@example.com',
     });
   }
-
-  async getPaymentStatus(orderId: string) {
-    return this.freeKassa.getPaymentStatus(orderId);
-  }
 }
 ```
 
