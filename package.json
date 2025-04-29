@@ -1,0 +1,47 @@
+{
+  "name": "@exact-team/freekassa-sdk-nestjs",
+  "version": "0.2.2",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "license": "AGPL-3.0-only",
+  "description": "freekassa sdk for nestjs",
+  "scripts": {
+    "prepublish": "rm -rf build && tsc",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/exact-team/freekassa-sdk-nestjs.git"
+  },
+  "homepage": "https://github.com/exact-team/freekassa-sdk-nestjs#readme",
+  "bugs": {
+    "url": "https://github.com/exact-team/freekassa-sdk-nestjs/issues"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.1.0",
+    "@nestjs/core": "^11.1.0"
+  },
+  "peerDependencies": {
+    "@exact-team/freekassa-sdk": ">=0.0.11"
+  },
+  "author": "Exact Team",
+  "keywords": [
+    "sdk",
+    "typescript",
+    "api",
+    "client",
+    "network",
+    "nestJs",
+    "freekassa-sdk",
+    "freekassa-sdk-nestjs"
+  ],
+  "devDependencies": {
+    "@types/node": "22.15.3",
+    "@typescript-eslint/eslint-plugin": "7.2.0",
+    "@typescript-eslint/parser": "7.2.0",
+    "eslint": "8.56.0",
+    "eslint-config-prettier": "9.0.0",
+    "eslint-plugin-prettier": "5.0.0",
+    "typescript": "5.8.3"
+  }
+}

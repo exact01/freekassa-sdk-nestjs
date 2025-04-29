@@ -1,0 +1,1 @@
+export const MODULE_NAME = 'FREEKASSA_SDK_NESTJS';
