@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/exact01/freekassa-sdk-nestjs.git"
+    "url": "https://github.com/exact01/freekassa_nestJS"
   },
   "homepage": "https://github.com/exact01/freekassa-sdk-nestjs#readme",
   "bugs": {
