@@ -1,6 +1,6 @@
 {
   "name": "@exact-team/freekassa-sdk-nestjs",
-  "version": "0.0.11",
+  "version": "0.0.13",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "license": "AGPL-3.0-only",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/exact01/freekassa_nestJS"
+    "url": "https://github.com/exact01/freekassa-sdk-nestjs"
   },
   "homepage": "https://github.com/exact01/freekassa-sdk-nestjs#readme",
   "bugs": {
