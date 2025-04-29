@@ -13,7 +13,7 @@ import { IFreekassaModuleOptions } from './interfaces';
 
 @Global()
 @Module({})
-export class XtlsSdkNestjsModule extends ConfigurableModuleClass {
+export class FreekassaNestjsModule extends ConfigurableModuleClass {
     constructor(private readonly moduleRef: ModuleRef) {
         super();
     }
