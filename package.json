@@ -1,6 +1,6 @@
 {
   "name": "@exact-team/freekassa-sdk-nestjs",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "license": "AGPL-3.0-only",
@@ -22,7 +22,7 @@
     "@nestjs/core": "^11.1.0"
   },
   "peerDependencies": {
-    "@exact-team/freekassa-sdk": ">=0.0.14"
+    "@exact-team/freekassa-sdk": ">=0.0.15"
   },
   "author": "Exact Team",
   "keywords": [
