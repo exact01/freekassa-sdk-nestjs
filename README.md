@@ -59,25 +59,33 @@ export class AppModule {}
 ### Асинхронная конфигурация
 
 ```typescript
-import { FreeKassaSdkNestjsModule } from '@exact-team/freekassa-sdk-nestjs';
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
+import { FreekassaNestjsModule } from '@exact-team/freekassa-sdk-nestjs';
+import { IFreekassaModuleOptions } from '@exact-team/freekassa-sdk-nestjs/build/interfaces';
+import { FreenkassaService } from './freekassa.service';
 
 @Module({
   imports: [
-    FreeKassaSdkNestjsModule.forRootAsync({
+    FreekassaNestjsModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        key: configService.get('FREEEKASSA_API_KEY'),
-        secretWord1: configService.get('FREEEKASSA_SECRET_WORD_1'),
-        secretWord2: configService.get('FREEEKASSA_SECRET_WORD_2'),
-        shopId: configService.get('FREEEKASSA_SHOP_ID'),
-        lang: configService.get('FREEEKASSA_LANG', 'ru'),
-        currency: configService.get('FREEEKASSA_CURRENCY', 'RUB'),
+      useFactory: async (configService: ConfigService): Promise<IFreekassaModuleOptions> => ({
+        key: configService.getOrThrow('FREEKASSA_API_KEY'),
+        secretWord1: configService.getOrThrow('FREEKASSA_SECRET_WORD_1'),
+        secretWord2: configService.getOrThrow('FREEKASSA_SECRET_WORD_2'),
+        shopId: Number(configService.getOrThrow('FREEKASSA_SHOP_ID')),
+        lang: 'ru',
+        currency: 'RUB',
+        payUrl: 'https://pay.fk.money/',
+        apiUrl: 'https://api.fk.life/v1/',
       }),
       inject: [ConfigService],
     }),
   ],
+  providers: [FreenkassaService],
 })
-export class AppModule {}
+export class FreenkassaModule {}
 ```
 
 ## Использование в сервисах
@@ -116,8 +124,8 @@ interface IFreekassaModuleOptions {
   shopId: number; // ID магазина
   lang: 'ru' | 'en'; // Язык интерфейса
   currency: 'RUB' | 'USD' | 'EUR' | 'UAH' | 'KZT'; // Валюта
-  payUrl?: string; // URL SCI для платежей
-  apiUrl?: string; // Опциональный URL API
+  payUrl: string; // URL SCI для платежей
+  apiUrl: string; // Опциональный URL API
 }
 ```
 
