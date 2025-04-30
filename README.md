@@ -19,7 +19,7 @@
 ## Установка
 
 ```bash
-npm install @exact-team/freekassa-sdk-nestjs
+npm install @exact-team/freekassa-sdk-nestjs && npm instal @exact-team/freekassa-sdk
 ```
 
 ## Возможности
@@ -48,7 +48,6 @@ import { FreeKassaSdkNestjsModule } from '@exact-team/freekassa-sdk-nestjs';
       shopId: 12345,
       lang: 'ru',
       currency: 'RUB',
-      // Опциональные параметры
       payUrl: 'https://your-custom-pay-url.com',
       apiUrl: 'https://your-custom-api-url.com',
     }),
@@ -117,7 +116,7 @@ interface IFreekassaModuleOptions {
   shopId: number; // ID магазина
   lang: 'ru' | 'en'; // Язык интерфейса
   currency: 'RUB' | 'USD' | 'EUR' | 'UAH' | 'KZT'; // Валюта
-  payUrl?: string; // Опциональный URL для платежей
+  payUrl?: string; // URL SCI для платежей
   apiUrl?: string; // Опциональный URL API
 }
 ```
@@ -132,8 +131,8 @@ interface IFreekassaModuleOptions {
 | shopId      | number                                    | Да          | ID магазина в системе FreeKassa |
 | lang        | 'ru' \| 'en'                              | Да          | Язык интерфейса                 |
 | currency    | 'RUB' \| 'USD' \| 'EUR' \| 'UAH' \| 'KZT' | Да          | Валюта платежей                 |
-| payUrl      | string                                    | Нет         | Кастомный URL для платежей      |
-| apiUrl      | string                                    | Нет         | Кастомный URL API               |
+| payUrl      | string                                    | Да          | Кастомный URL для платежей      |
+| apiUrl      | string                                    | Да          | Кастомный URL API               |
 
 ## Справочник API
 
@@ -149,6 +148,7 @@ interface IFreekassaModuleOptions {
 - `getBalance()`: Получение баланса мерчанта
 - `getPaymentMethods()`: Получение доступных методов оплаты
 - `getExchangeRates()`: Получение курсов валют
+- `verifyNotification(body: INotification)`: Верифаикация body вашего вебхука
 
 ### Декораторы
 
@@ -160,7 +160,13 @@ interface IFreekassaModuleOptions {
 
 ```typescript
 try {
-  await this.freeKassa.createPayment(paymentData);
+  await this.freeKassa.createPayment({
+    methodId: 1, //number
+    email: 'example@mail.ru',
+    ip: '127.0.0.1', //ip
+    amount: 10, // 10 RUB
+    paymentId: new Date().getTime().toString(), // ID your system!!!!!!
+  });
 } catch (error) {
   if (error instanceof FreeKassaError) {
     // Обработка ошибок FreeKassa
@@ -175,13 +181,11 @@ try {
 
 ```typescript
 const payment = await this.freeKassa.createPayment({
-  amount: 1000,
-  currency: 'RUB',
-  orderId: 'order-123',
-  email: 'customer@example.com',
-  paymentMethod: 'card',
-  successUrl: 'https://your-site.com/success',
-  failureUrl: 'https://your-site.com/failure',
+  methodId: 1, //number
+  email: 'example@mail.ru',
+  ip: '127.0.0.1', //ip
+  amount: 10, // 10 RUB
+  paymentId: new Date().getTime().toString(), // ID your system!!!!!!
 });
 ```
 
@@ -189,9 +193,21 @@ const payment = await this.freeKassa.createPayment({
 
 ```typescript
 const status = await this.freeKassa.getPaymentStatus('order-123');
-if (status === 'PAID') {
-  // Обработка успешного платежа
-}
+
+//=========
+const randomBody = {
+  MERCHANT_ID: '1', // YOUR SHOP ID
+  AMOUNT: '10', // 10 RUB
+  intid: '196646649', // initID
+  MERCHANT_ORDER_ID: '1746001556454', // ID YOUR SYSTEM
+  P_EMAIL: 'example@mail.ru',
+  P_PHONE: '',
+  CUR_ID: '1',
+  commission: '0',
+  SIGN: 'a242444ec9b2cf63e5fa1ea1ef1bd991',
+};
+const verify = freekassa.verifyNotification(randomBody);
+console.log(verify); //bool
 ```
 
 ## Лицензия
