@@ -99,7 +99,7 @@ import { FreeKassa } from '@exact-team/freekassa-sdk';
 
 @Injectable()
 export class PaymentService {
-  constructor(@InjectFreeKassa() private readonly freeKassa: FreeKassa) {}
+  constructor(@InjectFreeKassa() private readonly freekassa: Freekassa) {}
 
   async createPayment(amount: number, currency: string) {
     return this.freeKassa.createPayment({
