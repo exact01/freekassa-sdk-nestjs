@@ -14,17 +14,30 @@
 ![Known Vulnerabilities](https://snyk.io/test/github/exact01/freekassa-sdk-nestjs/badge.svg)
 ![Coverage Status](https://img.shields.io/codecov/c/github/exact01/freekassa-sdk-nestjs)
 
-Модуль NestJS для интеграции платежной системы FreeKassa в ваши приложения. Предоставляет удобный интерфейс для работы с API FreeKassa.
+## Описание
+
+FreeKassa SDK Module для NestJS - это модуль для интеграции платежной системы FreeKassa в ваши NestJS приложения. Модуль предоставляет удобный интерфейс для работы с API FreeKassa и автоматически управляет жизненным циклом SDK.
 
 ## Установка
 
 ```bash
-npm install @exact-team/freekassa-sdk-nestjs && npm instal @exact-team/freekassa-sdk
+npm install @exact-team/freekassa-sdk-nestjs @exact-team/freekassa-sdk
 ```
 
-## Возможности
+## Структура проекта
 
-- 🚀 Простая интеграция с приложениями NestJS
+```
+src/
+├── common/        # Общие утилиты и константы
+├── decorators/    # Декораторы для внедрения зависимостей
+├── interfaces/    # Интерфейсы и типы
+├── freekassa-sdk-nestjs.module.ts  # Основной модуль
+└── freekassa-sdk-nestjs.builder.ts # Билдер для конфигурации
+```
+
+## Основные возможности
+
+- 🚀 Простая интеграция с NestJS приложениями
 - ⚡ Поддержка синхронной и асинхронной конфигурации
 - 🔄 Автоматическая очистка при завершении работы приложения
 - 🌐 Глобальная доступность модуля
@@ -32,7 +45,20 @@ npm install @exact-team/freekassa-sdk-nestjs && npm instal @exact-team/freekassa
 - 🔒 Типизация всех параметров и ответов API
 - 📦 Поддержка всех методов API FreeKassa
 
-## Быстрый старт
+## Конфигурация
+
+### Обязательные параметры
+
+- `key` - API ключ для подписи запросов
+- `secretWord1` - Первое секретное слово для подписи платежных форм
+- `secretWord2` - Второе секретное слово для проверки уведомлений
+- `shopId` - ID вашего магазина
+- `lang` - Язык интерфейса (`ru` или `en`)
+- `currency` - Валюта платежей (`RUB`, `USD`, `EUR`, `UAH`, `KZT`)
+- `payUrl` - URL платежной формы (по умолчанию: `https://pay.fk.money/`)
+- `apiUrl` - URL API (по умолчанию: `https://api.fk.life/v1/`)
+
+## Использование
 
 ### Синхронная конфигурация
 
@@ -48,8 +74,8 @@ import { FreeKassaSdkNestjsModule } from '@exact-team/freekassa-sdk-nestjs';
       shopId: 12345,
       lang: 'ru',
       currency: 'RUB',
-      payUrl: 'https://your-custom-pay-url.com',
-      apiUrl: 'https://your-custom-api-url.com',
+      payUrl: 'https://pay.fk.money/',
+      apiUrl: 'https://api.fk.life/v1/',
     }),
   ],
 })
@@ -62,13 +88,12 @@ export class AppModule {}
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ConfigService } from '@nestjs/config';
-import { FreekassaNestjsModule } from '@exact-team/freekassa-sdk-nestjs';
-import { IFreekassaModuleOptions } from '@exact-team/freekassa-sdk-nestjs/build/interfaces';
-import { FreenkassaService } from './freekassa.service';
+import { FreeKassaSdkNestjsModule } from '@exact-team/freekassa-sdk-nestjs';
+import { IFreekassaModuleOptions } from '@exact-team/freekassa-sdk-nestjs';
 
 @Module({
   imports: [
-    FreekassaNestjsModule.forRootAsync({
+    FreeKassaSdkNestjsModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService): Promise<IFreekassaModuleOptions> => ({
         key: configService.getOrThrow('FREEKASSA_API_KEY'),
@@ -83,14 +108,11 @@ import { FreenkassaService } from './freekassa.service';
       inject: [ConfigService],
     }),
   ],
-  providers: [FreenkassaService],
 })
-export class FreenkassaModule {}
+export class AppModule {}
 ```
 
-## Использование в сервисах
-
-### Внедрение через декоратор
+### Использование в сервисах
 
 ```typescript
 import { Injectable } from '@nestjs/common';
@@ -99,64 +121,30 @@ import { FreeKassa } from '@exact-team/freekassa-sdk';
 
 @Injectable()
 export class PaymentService {
-  constructor(@InjectFreeKassa() private readonly freekassa: Freekassa) {}
+  constructor(@InjectFreeKassa() private readonly freekassa: FreeKassa) {}
 
   async createPayment(amount: number, currency: string) {
-    return this.freeKassa.createPayment({
-      amount,
-      currency,
-      orderId: 'unique-order-id',
+    return this.freekassa.createPayment({
+      methodId: 1,
       email: 'customer@example.com',
+      ip: '127.0.0.1',
+      amount,
+      paymentId: new Date().getTime().toString(),
     });
+  }
+
+  async verifyNotification(notification: any) {
+    return this.freekassa.verifyNotification(notification);
   }
 }
 ```
 
-### Типы и интерфейсы
-
-Модуль предоставляет следующие основные типы:
-
-```typescript
-interface IFreekassaModuleOptions {
-  key: string; // API ключ
-  secretWord1: string; // Первый секретный ключ
-  secretWord2: string; // Второй секретный ключ
-  shopId: number; // ID магазина
-  lang: 'ru' | 'en'; // Язык интерфейса
-  currency: 'RUB' | 'USD' | 'EUR' | 'UAH' | 'KZT'; // Валюта
-  payUrl: string; // URL SCI для платежей
-  apiUrl: string; // Опциональный URL API
-}
-```
-
-## Опции конфигурации
-
-| Опция       | Тип                                       | Обязательно | Описание                        |
-| ----------- | ----------------------------------------- | ----------- | ------------------------------- |
-| key         | string                                    | Да          | API ключ FreeKassa              |
-| secretWord1 | string                                    | Да          | Первый секретный ключ           |
-| secretWord2 | string                                    | Да          | Второй секретный ключ           |
-| shopId      | number                                    | Да          | ID магазина в системе FreeKassa |
-| lang        | 'ru' \| 'en'                              | Да          | Язык интерфейса                 |
-| currency    | 'RUB' \| 'USD' \| 'EUR' \| 'UAH' \| 'KZT' | Да          | Валюта платежей                 |
-| payUrl      | string                                    | Да          | Кастомный URL для платежей      |
-| apiUrl      | string                                    | Да          | Кастомный URL API               |
-
-## Справочник API
+## API
 
 ### FreeKassaSdkNestjsModule
 
 - `forRoot(options: IFreekassaModuleOptions)`: Статический метод для синхронной конфигурации модуля
 - `forRootAsync(options: AsyncModuleOptions)`: Статический метод для асинхронной конфигурации модуля
-
-### Основные методы FreeKassa API
-
-- `createPayment(data: IPaymentRequest)`: Создание нового платежа
-- `getPaymentStatus(orderId: string)`: Получение статуса платежа
-- `getBalance()`: Получение баланса мерчанта
-- `getPaymentMethods()`: Получение доступных методов оплаты
-- `getExchangeRates()`: Получение курсов валют
-- `verifyNotification(body: INotification)`: Верифаикация body вашего вебхука
 
 ### Декораторы
 
@@ -168,12 +156,12 @@ interface IFreekassaModuleOptions {
 
 ```typescript
 try {
-  await this.freeKassa.createPayment({
-    methodId: 1, //number
+  await this.freekassa.createPayment({
+    methodId: 1,
     email: 'example@mail.ru',
-    ip: '127.0.0.1', //ip
-    amount: 10, // 10 RUB
-    paymentId: new Date().getTime().toString(), // ID your system!!!!!!
+    ip: '127.0.0.1',
+    amount: 10,
+    paymentId: new Date().getTime().toString(),
   });
 } catch (error) {
   if (error instanceof FreeKassaError) {
@@ -183,49 +171,45 @@ try {
 }
 ```
 
-## Примеры использования
+## Требования
 
-### Создание платежа
+- Node.js 20+
+- NestJS 10+
+- TypeScript 5.0+
 
-```typescript
-const payment = await this.freeKassa.createPayment({
-  methodId: 1, //number
-  email: 'example@mail.ru',
-  ip: '127.0.0.1', //ip
-  amount: 10, // 10 RUB
-  paymentId: new Date().getTime().toString(), // ID your system!!!!!!
-});
+## Разработка
+
+### Сборка
+
+```bash
+# Сборка проекта
+npm run build
+
+# Запуск линтера
+npm run lint
 ```
 
-### Проверка статуса платежа
+### Линтинг
 
-```typescript
-const status = await this.freeKassa.getPaymentStatus('order-123');
+Проект использует ESLint и Prettier для поддержания качества кода.
 
-//=========
-const randomBody = {
-  MERCHANT_ID: '1', // YOUR SHOP ID
-  AMOUNT: '10', // 10 RUB
-  intid: '196646649', // initID
-  MERCHANT_ORDER_ID: '1746001556454', // ID YOUR SYSTEM
-  P_EMAIL: 'example@mail.ru',
-  P_PHONE: '',
-  CUR_ID: '1',
-  commission: '0',
-  SIGN: 'a242444ec9b2cf63e5fa1ea1ef1bd991',
-};
-const verify = freekassa.verifyNotification(randomBody);
-console.log(verify); //bool
-```
+### Тестирование
+
+Для тестирования модуля рекомендуется:
+
+1. Использовать тестовые API-ключи
+2. Проверять все сценарии обработки ошибок
+3. Верифицировать подписи платежных форм
+4. Тестировать обработку уведомлений
 
 ## Лицензия
 
 AGPL-3.0-only
 
-## Вклад в проект
+## Автор
 
-Приветствуются любые вклады! Пожалуйста, не стесняйтесь отправлять Pull Request.
+exact01
 
 ## Поддержка
 
-Для получения поддержки, пожалуйста, создайте issue в репозитории GitHub.
+Для получения поддержки или сообщения об ошибках, пожалуйста, создайте issue в репозитории проекта.

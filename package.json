@@ -3,7 +3,7 @@
   "version": "0.0.17",
   "main": "build/index.js",
   "types": "build/index.d.ts",
-  "license": "AGPL-3.0-only",
+  "license": "ISC",
   "description": "freekassa sdk for nestjs",
   "scripts": {
     "prepublish": "rm -rf build && tsc",
@@ -22,7 +22,7 @@
     "@nestjs/core": "^11.1.0"
   },
   "peerDependencies": {
-    "@exact-team/freekassa-sdk": ">=0.0.17"
+    "@exact-team/freekassa-sdk": ">=0.0.20"
   },
   "author": "Exact Team",
   "keywords": [
