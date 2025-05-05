@@ -24,7 +24,7 @@
   "peerDependencies": {
     "@exact-team/freekassa-sdk": ">=0.0.20"
   },
-  "author": "Exact Team",
+  "author": "exact01",
   "keywords": [
     "sdk",
     "typescript",
