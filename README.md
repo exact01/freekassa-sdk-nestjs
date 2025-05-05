@@ -202,7 +202,7 @@ npm run lint
 
 ## Лицензия
 
-AGPL-3.0-only
+ISC
 
 ## Автор
 
