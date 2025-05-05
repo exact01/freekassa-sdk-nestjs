@@ -1,6 +1,6 @@
 {
   "name": "@exact-team/freekassa-sdk-nestjs",
-  "version": "0.0.17",
+  "version": "0.0.20",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "license": "ISC",
