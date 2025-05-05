@@ -164,10 +164,8 @@ try {
     paymentId: new Date().getTime().toString(),
   });
 } catch (error) {
-  if (error instanceof FreeKassaError) {
-    // Обработка ошибок FreeKassa
-    console.error(error.message);
-  }
+  // Обработка ошибок FreeKassa
+  console.error(error);
 }
 ```
 
